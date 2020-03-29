@@ -171,4 +171,14 @@ public class Utilities {
         
         return reultado;
     }
+    
+    public static int MenuCrearArchivo(){
+        int resultado=0;
+        P("1) Añadir datos al archivo");
+        P("2) Sobreescribir el archivo");
+        P("3) Salir sin modificar");
+        p("-->>>");
+        resultado=getInt();
+        return resultado;
+    }
 }

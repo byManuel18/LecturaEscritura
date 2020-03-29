@@ -47,6 +47,7 @@ public class Controlador {
                 CrearArchivo();
                 break;
             case 4:
+                CopiarArchivo();
                 break;
             case 5:
                 break;
@@ -91,55 +92,116 @@ public class Controlador {
 
     private static void MostrarArchivo() {
         mF = new File(Utilities.getString("Introduce la dirección completa del archivo a mostrar"));
-        
+
         try {
             String linea;
             mFiRe = new FileReader(mF);
             mbBuRe = new BufferedReader(mFiRe);
-            while((linea=mbBuRe.readLine())!=null){
+            while ((linea = mbBuRe.readLine()) != null) {
                 Utilities.P(linea);
             }
             mFiRe.close();
             mbBuRe.close();
         } catch (IOException ex) {
-            Utilities.P("Error: "+ex);
+            Utilities.P("Error: " + ex);
         }
 
     }
-    
-    private static void CrearArchivo(){
+
+    private static void CrearArchivo() {
         String nombrearchivo;
         String extension;
         String ruta;
-        String contenido="";
-        nombrearchivo=Utilities.getString("Introduce el nombre del archivo");
-        extension=Utilities.getString("Introduce la extension del archivo");
-        ruta=Utilities.getString("Introduce la ruta del archivo");
-        char cara=92;
-        String path=ruta+Character.toString(cara)+nombrearchivo+"."+extension;
-        mF=new File(path);
-        if(!mF.exists()){
+        String contenido = "";
+        nombrearchivo = Utilities.getString("Introduce el nombre del archivo");
+        extension = Utilities.getString("Introduce la extension del archivo");
+        ruta = Utilities.getString("Introduce la ruta del archivo");
+        char cara = 92;
+        String path = ruta + Character.toString(cara) + nombrearchivo + "." + extension;
+        mF = new File(path);
+        if (!mF.exists()) {
             try {
-                mbBuWr=new BufferedWriter(new FileWriter(mF));
+                mbBuWr = new BufferedWriter(new FileWriter(mF));
                 Utilities.P("Introduce el contenido del archivo.(FIN para acabar)");
-                do{
+                do {
                     Utilities.p("-->> ");
-                    contenido=Utilities.getString();
-                    if(!contenido.equals("FIN")){
+                    contenido = Utilities.getString();
+                    if (!contenido.equals("FIN")) {
                         mbBuWr.write(contenido);
                         mbBuWr.newLine();
-                    } 
-                }while(!contenido.equals("FIN"));
-                
+                    }
+                } while (!contenido.equals("FIN"));
+
                 mbBuWr.close();
                 Utilities.P("Archivo creado correctamente.");
             } catch (IOException ex) {
-                Utilities.P("Error: "+ex);
+                Utilities.P("Error: " + ex);
             }
-        }else{
+        } else {
             Utilities.P("Ya existe un archivo con esas caracteríasticas.");
+            boolean salir = false;
+            do {
+                int opcion = Utilities.MenuCrearArchivo();
+                salir = ControladorSobreescribir(opcion, mF);
+
+            } while (!salir);
         }
+
+    }
+
+    private static boolean ControladorSobreescribir(int op, File f) {
+        boolean salir = false;
+        String contenido = "";
+        switch (op) {
+            case 1:
+
+                try {
+                    mbBuWr = mbBuWr = new BufferedWriter(new FileWriter(f, true));
+                } catch (IOException ex) {
+                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                salir = true;
+                break;
+            case 2:
+                try {
+                    mbBuWr = mbBuWr = new BufferedWriter(new FileWriter(f));
+                } catch (IOException ex) {
+                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                salir = true;
+                break;
+            case 3:
+                salir = true;
+                break;
+            default:
+                Utilities.P("Opción incorrecta.");
+        }
+        if (op == 1 || op == 2) {
+            try {
+
+                Utilities.P("Introduce el contenido al archivo.(FIN para acabar)");
+                do {
+                    Utilities.p("-->> ");
+                    contenido = Utilities.getString();
+                    if (!contenido.equals("FIN")) {
+                        mbBuWr.write(contenido);
+                        mbBuWr.newLine();
+                    }
+                } while (!contenido.equals("FIN"));
+
+                mbBuWr.close();
+                Utilities.P("Archivo modificado correctamente.");
+            } catch (IOException ex) {
+                Utilities.P("Error: " + ex);
+            }
+        }
+        return salir;
+    }
+    private static void CopiarArchivo(){
         
     }
 }
- 
+
+
