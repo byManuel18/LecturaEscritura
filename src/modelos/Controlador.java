@@ -7,8 +7,11 @@ package modelos;
 
 import utilidades.Utilities;
 import java.io.*;
+import java.util.jar.JarOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  *
@@ -22,6 +25,11 @@ public class Controlador {
     private static BufferedWriter mbBuWr;
     private static InputStream inputStr;
     private static OutputStream outStr;
+    private static byte[] buffer = new byte[1024];
+    private static FileInputStream filrInStr;
+    private static FileOutputStream filrOutSt;
+    private static ZipOutputStream zipOutSt;
+    private static ZipEntry zipEn;
 
     public static void run() {
         Menu();
@@ -63,6 +71,7 @@ public class Controlador {
                 BorrarCarpeta();
                 break;
             case 8:
+                ComprimirArchivo();
                 break;
             case 9:
                 break;
@@ -219,8 +228,8 @@ public class Controlador {
                 inputStr = new FileInputStream(mF);
                 outStr = new FileOutputStream(copia);
                 int n = 0;
-                while ((n = inputStr.read()) > 0) {
-                    outStr.write(n);
+                while ((n = inputStr.read(buffer)) > 0) {
+                    outStr.write(buffer, 0, n);
                 }
                 inputStr.close();
                 outStr.close();
@@ -253,9 +262,8 @@ public class Controlador {
                             inputStr = new FileInputStream(new File(pathorigen + File.separator + d));
                             outStr = new FileOutputStream(new File(pathdestino + File.separator + d));
                             int nume = 0;
-                            byte[] buf = new byte[1024];
-                            while ((nume = inputStr.read(buf)) > 0) {
-                                outStr.write(buf, 0, nume);
+                            while ((nume = inputStr.read(buffer)) > 0) {
+                                outStr.write(buffer, 0, nume);
                             }
                             inputStr.close();
                             outStr.close();
@@ -340,7 +348,7 @@ public class Controlador {
                         Utilities.P("No ha borrado.");
                         salir = true;
                     }
-                    if(!salir){
+                    if (!salir) {
                         System.out.println("Selecciona una opción del menu.");
                     }
 
@@ -363,5 +371,32 @@ public class Controlador {
             fil.delete();
 
         }
+    }
+
+    private static void ComprimirArchivo() {
+        mF = new File(Utilities.getString("Introduce la ruta del archivo a comprimir"));
+        if (!mF.isDirectory()) {
+            try {
+                filrInStr = new FileInputStream(mF);
+                filrOutSt = new FileOutputStream(Utilities.getString("Intriduce la ruta completa del archivo  junto al nombre del archivo comprimido  dónde va a guardar junto a la extensión"));
+                zipOutSt = new JarOutputStream(filrOutSt);
+                zipEn = new ZipEntry(Utilities.getString("Introduce el nomnre del que quieradarle al archivo a comprimir"));
+                zipOutSt.putNextEntry(zipEn);
+                int n = 0;
+                while ((n = filrInStr.read(buffer)) > 0) {
+                    zipOutSt.write(buffer, 0, n);
+                }
+                filrInStr.close();
+                
+                zipOutSt.closeEntry();
+                zipOutSt.close();
+             
+            } catch (IOException ex) {
+                Utilities.P("Error: " + ex);
+            }
+        } else {
+            Utilities.P("No se un archivo.");
+        }
+
     }
 }
