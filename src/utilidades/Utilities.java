@@ -181,4 +181,13 @@ public class Utilities {
         resultado=getInt();
         return resultado;
     }
+    public static int MenuConfirmación(){
+        int resultado=0;
+        P("¿Seguro que desea borrar?");
+        P("1) Sí");
+        P("2) No");
+        p("-->> ");
+        resultado=getInt();
+        return resultado;
+    }
 }

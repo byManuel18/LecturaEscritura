@@ -57,6 +57,7 @@ public class Controlador {
                 }
                 break;
             case 6:
+                EliminarArchivo();
                 break;
             case 7:
                 break;
@@ -277,5 +278,45 @@ public class Controlador {
         if (!directorio.exists()) {
             directorio.mkdirs();
         }
+    }
+    
+    private static void EliminarArchivo(){
+        mF=new File(Utilities.getString("Introduce la ruta completa del archivo"));
+        if(mF.exists()){
+            if(!mF.isDirectory()){
+                int opcioncon=0;
+                do{
+                    opcioncon=Utilities.MenuConfirmación();
+                }while(!MenuConfirmacion(opcioncon, mF));
+            }else{
+                Utilities.P("Se trata de un directorio, para borrar seleccione la opción de borrar directorio del menú anterior.");
+            }
+        }else{
+            Utilities.P("No existe el archivo.");
+        }
+            
+    }
+    
+    private static boolean MenuConfirmacion(int op,File f){
+        boolean salir=false;
+        switch(op){
+            case 1:
+                if(f.delete()){
+                    System.out.println("Archivo borrado correctamente");
+                }else{
+                    System.out.println("Error al intentar eliminar");
+                }
+                salir =true;
+                break;
+            case 2:
+                Utilities.P("No se ha borrado.");
+                salir=true;
+                break;
+            default:
+                Utilities.P("Opción no válida");
+                salir=false;
+                
+        }
+        return salir;
     }
 }
