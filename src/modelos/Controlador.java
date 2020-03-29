@@ -52,6 +52,7 @@ public class Controlador {
                 CopiarArchivo();
                 break;
             case 5:
+                CopiarCarpetas(Utilities.getString("Introduce la ruta de la carpeta a copiar"),Utilities.getString("Introduce la ruta de destino"));
                 break;
             case 6:
                 break;
@@ -201,19 +202,20 @@ public class Controlador {
         }
         return salir;
     }
-    private static void CopiarArchivo(){
+
+    private static void CopiarArchivo() {
         String path;
-        path=Utilities.getString("Introduce la ruta completa del archivo a copiar");
-        mF=new File(path);
-        path=Utilities.getString("Introduce la ruta completa donde copiar el archivo");
-        File copia=new File(path);
-        
-        if(mF.exists()){
+        path = Utilities.getString("Introduce la ruta completa del archivo a copiar");
+        mF = new File(path);
+        path = Utilities.getString("Introduce la ruta completa donde copiar el archivo");
+        File copia = new File(path);
+
+        if (mF.exists()) {
             try {
-                inputStr=new FileInputStream(mF);
-                outStr=new FileOutputStream(copia);
-                int n=0;
-                while((n=inputStr.read())>0){
+                inputStr = new FileInputStream(mF);
+                outStr = new FileOutputStream(copia);
+                int n = 0;
+                while ((n = inputStr.read()) > 0) {
                     outStr.write(n);
                 }
                 inputStr.close();
@@ -221,11 +223,54 @@ public class Controlador {
             } catch (IOException ex) {
                 Utilities.P("Error: " + ex);
             }
-            
-        }else{
+
+        } else {
             Utilities.P("No existe el archivo a copiar.");
         }
     }
+
+    private static void CopiarCarpetas(String pathorigen, String pathdestino) {
+        mF = new File(pathorigen);
+        File n;
+        if (mF.exists()) {
+            if (mF.isDirectory()) {
+                comprobarCrearDirectorio(pathdestino);
+                String[] datos = mF.list();
+
+                for (String d : datos) {
+                    n = new File(pathorigen + File.separator + d);
+                    if (n.isDirectory()) {
+                        comprobarCrearDirectorio(pathdestino + File.separator + d + File.separator);
+                        CopiarCarpetas(pathorigen + File.separator + d + File.separator, pathdestino + File.separator + d + File.separator);
+
+                    } else {
+                        try {
+                            inputStr = new FileInputStream(new File(pathorigen + File.separator + d));
+                            outStr = new FileOutputStream(new File(pathdestino + File.separator + d));
+                            int nume = 0;
+                            byte[] buf = new byte[1024];
+                            while ((nume = inputStr.read(buf)) > 0) {
+                                outStr.write(buf, 0, nume);
+                            }
+                            inputStr.close();
+                            outStr.close();
+                        } catch (IOException ex) {
+                            Utilities.P("Error: " + ex);
+                        }
+                    }
+                }
+
+            }
+        }else{
+            Utilities.P("No existe la carpeta.");
+        }
+
+    }
+
+    private static void comprobarCrearDirectorio(String ruta) {
+        File directorio = new File(ruta);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+    }
 }
-
-
