@@ -20,6 +20,8 @@ public class Controlador {
     private static FileReader mFiRe;
     private static BufferedReader mbBuRe;
     private static BufferedWriter mbBuWr;
+    private static InputStream inputStr;
+    private static OutputStream outStr;
 
     public static void run() {
         Menu();
@@ -158,7 +160,7 @@ public class Controlador {
                 try {
                     mbBuWr = mbBuWr = new BufferedWriter(new FileWriter(f, true));
                 } catch (IOException ex) {
-                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    Utilities.P("Error: " + ex);
                 }
 
                 salir = true;
@@ -167,7 +169,7 @@ public class Controlador {
                 try {
                     mbBuWr = mbBuWr = new BufferedWriter(new FileWriter(f));
                 } catch (IOException ex) {
-                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    Utilities.P("Error: " + ex);
                 }
 
                 salir = true;
@@ -200,7 +202,29 @@ public class Controlador {
         return salir;
     }
     private static void CopiarArchivo(){
+        String path;
+        path=Utilities.getString("Introduce la ruta completa del archivo a copiar");
+        mF=new File(path);
+        path=Utilities.getString("Introduce la ruta completa donde copiar el archivo");
+        File copia=new File(path);
         
+        if(mF.exists()){
+            try {
+                inputStr=new FileInputStream(mF);
+                outStr=new FileOutputStream(copia);
+                int n=0;
+                while((n=inputStr.read())>0){
+                    outStr.write(n);
+                }
+                inputStr.close();
+                outStr.close();
+            } catch (IOException ex) {
+                Utilities.P("Error: " + ex);
+            }
+            
+        }else{
+            Utilities.P("No existe el archivo a copiar.");
+        }
     }
 }
 
