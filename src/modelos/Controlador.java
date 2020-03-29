@@ -52,7 +52,9 @@ public class Controlador {
                 CopiarArchivo();
                 break;
             case 5:
-                CopiarCarpetas(Utilities.getString("Introduce la ruta de la carpeta a copiar"),Utilities.getString("Introduce la ruta de destino"));
+                if(CopiarCarpetas(Utilities.getString("Introduce la ruta de la carpeta a copiar"),Utilities.getString("Introduce la ruta de destino"))){
+                    Utilities.P("Carpeta copiada coorectamente.");
+                }
                 break;
             case 6:
                 break;
@@ -229,8 +231,9 @@ public class Controlador {
         }
     }
 
-    private static void CopiarCarpetas(String pathorigen, String pathdestino) {
+    private static boolean CopiarCarpetas(String pathorigen, String pathdestino) {
         mF = new File(pathorigen);
+        boolean creada=false;
         File n;
         if (mF.exists()) {
             if (mF.isDirectory()) {
@@ -261,10 +264,12 @@ public class Controlador {
                 }
 
             }
+            creada=true;
         }else{
-            Utilities.P("No existe la carpeta.");
+            Utilities.P("La ruta no coincide con ninguna carpeta.");
+            creada=false;
         }
-
+        return creada;
     }
 
     private static void comprobarCrearDirectorio(String ruta) {
