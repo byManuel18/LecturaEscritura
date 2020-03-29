@@ -52,7 +52,7 @@ public class Controlador {
                 CopiarArchivo();
                 break;
             case 5:
-                if(CopiarCarpetas(Utilities.getString("Introduce la ruta de la carpeta a copiar"),Utilities.getString("Introduce la ruta de destino"))){
+                if (CopiarCarpetas(Utilities.getString("Introduce la ruta de la carpeta a copiar"), Utilities.getString("Introduce la ruta de destino"))) {
                     Utilities.P("Carpeta copiada coorectamente.");
                 }
                 break;
@@ -60,6 +60,7 @@ public class Controlador {
                 EliminarArchivo();
                 break;
             case 7:
+                BorrarCarpeta();
                 break;
             case 8:
                 break;
@@ -234,7 +235,7 @@ public class Controlador {
 
     private static boolean CopiarCarpetas(String pathorigen, String pathdestino) {
         mF = new File(pathorigen);
-        boolean creada=false;
+        boolean creada = false;
         File n;
         if (mF.exists()) {
             if (mF.isDirectory()) {
@@ -265,10 +266,10 @@ public class Controlador {
                 }
 
             }
-            creada=true;
-        }else{
+            creada = true;
+        } else {
             Utilities.P("La ruta no coincide con ninguna carpeta.");
-            creada=false;
+            creada = false;
         }
         return creada;
     }
@@ -279,44 +280,88 @@ public class Controlador {
             directorio.mkdirs();
         }
     }
-    
-    private static void EliminarArchivo(){
-        mF=new File(Utilities.getString("Introduce la ruta completa del archivo"));
-        if(mF.exists()){
-            if(!mF.isDirectory()){
-                int opcioncon=0;
-                do{
-                    opcioncon=Utilities.MenuConfirmación();
-                }while(!MenuConfirmacion(opcioncon, mF));
-            }else{
+
+    private static void EliminarArchivo() {
+        mF = new File(Utilities.getString("Introduce la ruta completa del archivo"));
+        if (mF.exists()) {
+            if (!mF.isDirectory()) {
+                int opcioncon = 0;
+                do {
+                    opcioncon = Utilities.MenuConfirmación();
+                } while (!MenuConfirmacion(opcioncon, mF));
+            } else {
                 Utilities.P("Se trata de un directorio, para borrar seleccione la opción de borrar directorio del menú anterior.");
             }
-        }else{
+        } else {
             Utilities.P("No existe el archivo.");
         }
-            
+
     }
-    
-    private static boolean MenuConfirmacion(int op,File f){
-        boolean salir=false;
-        switch(op){
+
+    private static boolean MenuConfirmacion(int op, File f) {
+        boolean salir = false;
+        switch (op) {
             case 1:
-                if(f.delete()){
+                if (f.delete()) {
                     System.out.println("Archivo borrado correctamente");
-                }else{
+                } else {
                     System.out.println("Error al intentar eliminar");
                 }
-                salir =true;
+                salir = true;
                 break;
             case 2:
                 Utilities.P("No se ha borrado.");
-                salir=true;
+                salir = true;
                 break;
             default:
                 Utilities.P("Opción no válida");
-                salir=false;
-                
+                salir = false;
+
         }
         return salir;
+    }
+
+    private static void BorrarCarpeta() {
+        mF = new File(Utilities.getString("Introduce la direccción del directorio"));
+        boolean salir = false;
+        if (mF.exists()) {
+            if (mF.isDirectory()) {
+                do {
+                    int opc = Utilities.MenuConfirmación();
+                    if (opc == 1) {
+                        BorrarDirectorio(mF);
+                        if (mF.delete()) {
+                            Utilities.P("Borrado con exito.");
+                        } else {
+                            Utilities.P("No se ha podido borrar.");
+                        }
+                        salir = true;
+                    } else if (opc == 2) {
+                        Utilities.P("No ha borrado.");
+                        salir = true;
+                    }
+                    if(!salir){
+                        System.out.println("Selecciona una opción del menu.");
+                    }
+
+                } while (!salir);
+
+            } else {
+                Utilities.P("No es un directorio");
+            }
+        } else {
+            Utilities.P("No existe el directorio");
+        }
+    }
+
+    private static void BorrarDirectorio(File f) {
+        File[] files = f.listFiles();
+        for (File fil : files) {
+            if (fil.isDirectory()) {
+                BorrarDirectorio(fil);
+            }
+            fil.delete();
+
+        }
     }
 }
