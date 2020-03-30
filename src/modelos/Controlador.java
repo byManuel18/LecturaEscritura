@@ -74,6 +74,8 @@ public class Controlador {
                 ComprimirArchivo();
                 break;
             case 9:
+
+                ComprimirCarpeta(Utilities.getString("Introduce la ruta de la carpeta a copiar"), Utilities.getString("Introduce la ruta de destino"));
                 break;
             case 10:
                 break;
@@ -387,10 +389,10 @@ public class Controlador {
                     zipOutSt.write(buffer, 0, n);
                 }
                 filrInStr.close();
-                
+
                 zipOutSt.closeEntry();
                 zipOutSt.close();
-             
+
             } catch (IOException ex) {
                 Utilities.P("Error: " + ex);
             }
@@ -398,5 +400,33 @@ public class Controlador {
             Utilities.P("No se un archivo.");
         }
 
+    }
+
+    private static void ComprimirCarpeta(String pathorigen, String pathdestino) {
+        try {
+            mF = new File(pathorigen);
+            filrOutSt = new FileOutputStream(new File(pathdestino));
+            zipOutSt = new ZipOutputStream(filrOutSt);
+            if (mF.isDirectory()) {
+                String[] datos = mF.list();
+                for (String d : datos) {
+                    File nuevo = new File(pathorigen + File.separator + d);
+                    System.out.println(nuevo.getName());
+                    if (nuevo.isDirectory()) {
+                        ComprimirCarpeta(pathorigen + File.separator + d + File.separator, pathdestino + File.separator + d + File.separator);
+                    }
+                    filrInStr = new FileInputStream(nuevo);
+                    zipOutSt.putNextEntry(new ZipEntry(d));
+                    int nume = 0;
+                    while ((nume = filrInStr.read(buffer)) > 0) {
+                        zipOutSt.write(buffer, 0, nume);
+                    }
+                }
+            }
+            zipOutSt.flush();
+            zipOutSt.close();
+        } catch (IOException ex) {
+            Utilities.P("Error: " + ex);
+        }
     }
 }
